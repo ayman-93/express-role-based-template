@@ -36,20 +36,15 @@ const localStrategy = new LocalStrategy(
 // This module lets you authenticate endpoints using a JSON web token.
 // It is intended to be used to secure RESTful endpoints without sessions.
 const jwtStrategy = new JwtStrategy(jwtOptions, (jwtPayload, next) => {
-    console.log(jwtPayload.expires);
-    if (Date.now() > jwtPayload.expires) {
-        throw new JWTExpiredError();
-    } else {
-        User.findOne({ where: { id: jwtPayload.id } })
-            .then(user => {
-                if (user !== null) {
-                    next(null, user);
-                } else {
-                    next(null, false);
-                }
-            })
-            .catch(e => next(e));
-    }
+    User.findOne({ where: { id: jwtPayload.id } })
+        .then(user => {
+            if (user !== null) {
+                next(null, user);
+            } else {
+                next(null, false);
+            }
+        })
+        .catch(e => next(e));
 });
 
 // serialize and deserialize functions are used by passport under
